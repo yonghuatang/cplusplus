@@ -4,7 +4,7 @@
 using namespace std;
 
 int main() {
-    vector <int> rooms(9);   // vector <type> variable(elements)
+    vector<int> rooms(9);   // vector <type> variable(elements)
     for (int x: rooms) {
         cout << x << endl;
     }

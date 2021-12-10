@@ -1,10 +1,10 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
 #define ll long long
 
 int fib(int n) {
-    ll f[n+2];
+    ll f[n];
     ll i;
     f[0] = 0;  // the two base cases
     f[1] = 1;

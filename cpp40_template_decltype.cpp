@@ -8,6 +8,13 @@ template<typename T1, typename T2> T1 addition(T2 a, T2 b) {
     return a + b;
 }
 
+template <typename T> void swapp(T* ptr_a, T* ptr_b) {
+	T temp = *ptr_a;
+	*ptr_a = *ptr_b;
+	*ptr_b = temp; 
+}
+
+
 void increment(int& val) {
     val++;
 }
@@ -26,5 +33,8 @@ int main() {
     cout << p << endl;
     increment(p);
     cout << p << endl;
+    int a = 5;
+    int b = 7;
+
     return 0;
 }

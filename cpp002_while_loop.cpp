@@ -7,6 +7,6 @@ int main() {
         cout << i << "\n";
         i++;
     }
+    cout << i << endl;
     return 0;
 }
-

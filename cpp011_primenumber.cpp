@@ -2,10 +2,9 @@
 #include <vector>
 using namespace std;
 
-vector<int> result;
 
-void findPrime(int n) {
-    bool isPrime; 
+void findPrime(int n, vector<int> results) {
+    bool isPrime;
     for (int i=2; i<=n; i++) {
         isPrime = false;
         for (int j=2; i<j; j++) {
@@ -13,13 +12,16 @@ void findPrime(int n) {
                 break;
             };
         } else { // ?? for-else
+        
         }
     }    
 }
 
+
 int main() {
-    findPrime(200);
-    for (auto& i : result) {
+    vector<int> ans;
+    findPrime(200, ans);
+    for (auto& i : ans) {
         cout << i << endl;
     }
     return 0;

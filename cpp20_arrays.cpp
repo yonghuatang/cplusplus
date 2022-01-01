@@ -14,6 +14,6 @@ int main() {
     cout << "After change: " << endl;
     for (const auto i : foo) {
         cout << i << endl;
-    }
+    } 
     return 0;
 }

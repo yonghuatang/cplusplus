@@ -29,19 +29,24 @@ stack<int> myStack;
 /* === Queue: first-in-first-out, enqueue and dequeue === */
 
 queue<int> q;
-// myStack.push()  push into the stack
-// myStack.pop()  pop the top element
-// myStack.front()  returns a reference of the top element
-// myStack.empty()  checks if the stack is empty
+// q.push()  enqueue
+// q.pop()  pop (dequeue) the front element
+// q.front()  returns a reference of the front element
+// q.empty()  checks if the queue is empty
 
 
 /* === Priority queue: queue with sorting and priority dequeueing, default is max heap === */
 
 priority_queue<int> pq1;
-// pq.push()  push into the stack
-// pq.pop()  pop the top element
+// pq.push()  enqueue
+// pq.pop()  pop (dequeue) the top element (with highest priority thereof)
 // pq.top()  returns a reference of the top element
-// pq.empty()  checks if the stack is empty
+// pq.empty()  checks if the priority_queue is empty
+
+// while (!pq.empty()) {
+//         cout << "Popping: " << pq.top() << endl;
+//         pq.pop();
+// }
 
 // can also be used with comparators, for example min heap
 struct comp {

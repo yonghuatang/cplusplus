@@ -5,10 +5,11 @@ using namespace std;
 
 // calculate factorial (n!) using recursion
 int fact(int n) {
-    if (n==1) {
-        return 1; 
-    }
-    else {
+    if (n==0) {
+        return 1;
+    } else if (n <= 2) {
+        return n; 
+    } else {
         return n * fact(n-1);
     }
 }
@@ -17,11 +18,11 @@ int fact(int n) {
 int bc(int n, int k) {
     if (k==0 || k==n) {
         return 1;
-    }
-    else {
+    } else {
         return bc(n-1, k-1) + bc(n-1, k);
     }
 }
+
 // or using factorial definiton,
 int bcfact(int n, int k) {
     return fact(n) / (fact(k) * fact(n-k));

@@ -3,7 +3,8 @@
 using namespace std;
 
 
-void findPrime(int n, vector<int> results) {
+vector<int> findPrime(int n) {
+    vector<int> primes;
     bool isPrime;
     for (int i=2; i<=n; i++) {
         isPrime = false;
@@ -14,7 +15,8 @@ void findPrime(int n, vector<int> results) {
         } else { // ?? for-else
         
         }
-    }    
+    }
+    return primes;
 }
 
 
@@ -25,4 +27,4 @@ int main() {
         cout << i << endl;
     }
     return 0;
-} //not working??
+}

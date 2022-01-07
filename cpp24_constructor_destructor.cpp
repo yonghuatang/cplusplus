@@ -4,7 +4,10 @@ using namespace std;
 class MyClass {
     public:
         MyClass() {   // Constructor
-            cout << "Hello World!";
+            cout << "Object created!" << endl;
+        }
+        ~MyClass() {   // Destructor
+            cout << "Object destroyed!" << endl;
         }
 };
 

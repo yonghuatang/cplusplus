@@ -1,3 +1,5 @@
+#pragma once  // prevent duplicate inclusion
+
 #include <bits/stdc++.h>
 using namespace std;
 

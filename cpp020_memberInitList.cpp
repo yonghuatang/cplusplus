@@ -15,11 +15,24 @@ class myClass {
         {
             cout << "An object is created! Arguments passed!" << endl;
         }
-        void printValue() {
+        void printValue() const {
             printf("Values: x=%d, y=%d, z=%d \n", x, y, z);
         }
 };
 
+/*
+Member initialisation is not assignment!
+
+==> This is class member assignment
+myClass::myClass() {
+    x = 0;
+    y = 0;
+    z = 0;
+}
+
+==> This is member initialisation
+myClass::myClass() : x{0}, y{0}, z{0] {} 
+*/
 
 int main() {
     myClass m1;

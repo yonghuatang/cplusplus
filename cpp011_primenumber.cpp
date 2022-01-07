@@ -7,13 +7,15 @@ vector<int> findPrime(int n) {
     vector<int> primes;
     bool isPrime;
     for (int i=2; i<=n; i++) {
-        isPrime = false;
+        isPrime = true;
         for (int j=2; i<j; j++) {
             if (i % j == 0) {
+                isPrime = false;
                 break;
-            };
-        } else { // ?? for-else
-        
+            }
+        }
+        if (isPrime) {
+            primes.push_back(i);
         }
     }
     return primes;
@@ -21,10 +23,11 @@ vector<int> findPrime(int n) {
 
 
 int main() {
-    vector<int> ans;
-    findPrime(200, ans);
+    vector<int> ans = findPrime(200);
+    cout << "Primes: ";
     for (auto& i : ans) {
-        cout << i << endl;
+        cout << i << " ";
     }
+    cout << "\nDone" << endl;
     return 0;
 }

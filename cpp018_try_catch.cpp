@@ -3,10 +3,6 @@
 using namespace std;
 
 
-int division(int m, int n) {
-    return m / n;
-}
-
 int main() {
     int a, b;
     string result = "None";
@@ -17,7 +13,7 @@ int main() {
         if (b == 0) {
             throw b;
         }
-        result = to_string(division(a, b));
+        result = to_string(a / b);
     }
     catch (int e) {
         cout << "Error: Zero-division is not permissible!" << endl;

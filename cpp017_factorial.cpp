@@ -1,19 +1,21 @@
 #include <iostream>
 using namespace std;
 
-int main()
-{
-    unsigned int n;
-    unsigned long long factorial = 1;//???
+uint64_t fact(int num) {
+    uint64_t ans = 1;
+    if (num<=1) {
+        return ans;
+    }
+    for (int i=1; i<=num; i++) {
+        ans *= i;
+    }
+    return ans;
+}
 
+int main() {
+    int n;
     cout << "Enter a positive integer: ";
     cin >> n;
-
-    for (int i = 1; i <=n; ++i)
-    {
-        factorial *= i;
-    }
-
-    cout << "Factorial of " << n << " = " << factorial;
+    cout << "Factorial of " << n << " is " << fact(n);
     return 0;
 }

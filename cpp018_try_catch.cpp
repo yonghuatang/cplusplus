@@ -1,14 +1,31 @@
-// exceptions
+// C++ Exception Handling
 #include <iostream>
 using namespace std;
 
+
+int division(int m, int n) {
+    return m / n;
+}
+
 int main() {
-    int x;
+    int a, b;
+    string result = "None";
+    cout << "Please input two integers 'a' and 'b' such that a / b will be calculated: ";
+    cin >> a >> b;
+
     try {
-      throw 20;
+        if (b == 0) {
+            throw b;
+        }
+        result = to_string(division(a, b));
     }
     catch (int e) {
-        cout << "An exception occurred." << endl;
+        cout << "Error: Zero-division is not permissible!" << endl;
     }
+    catch (...) {
+        cout << "Default exception occurred!" << endl;
+    }
+
+    cout << "The answer is: " << result << endl;
     return 0;
 }

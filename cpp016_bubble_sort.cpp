@@ -23,7 +23,6 @@ template<typename T> void bubbleSort(T arr[], int size) {
     for (int e=0; e<size; e++) {
         cout << arr[e] << " ";
     }
-    cout << endl;
     for (int i=0; i<size-1; i++) {
     // Last i elements are already sorted in place  
         for (int j=0; j<size-i-1; j++) {
@@ -36,7 +35,7 @@ template<typename T> void bubbleSort(T arr[], int size) {
 
 
 template<typename T> void printArray(T arr[], int size) {
-    cout << "Sorted array: " << endl;  
+    cout << "\nSorted array: " << endl;  
     for (int i=0; i<size; i++) {
         cout << arr[i] << " ";  
     }
@@ -55,4 +54,4 @@ int main() {
     bubbleSort<char>(myArray2, myArraySize);
     printArray<char>(myArray2, myArraySize);
     return 0;
-}  
+}

@@ -8,7 +8,7 @@ vector<int> findPrime(int n) {
     bool isPrime;
     for (int i=2; i<=n; i++) {
         isPrime = true;
-        for (int j=2; i<j; j++) {
+        for (int j=2; j<i; j++) {
             if (i % j == 0) {
                 isPrime = false;
                 break;
@@ -23,11 +23,11 @@ vector<int> findPrime(int n) {
 
 
 int main() {
-    vector<int> ans = findPrime(200);
+    auto ans = findPrime(200);
     cout << "Primes: ";
     for (auto& i : ans) {
         cout << i << " ";
     }
-    cout << "\nDone" << endl;
+    cout << "\nDone." << endl;
     return 0;
 }

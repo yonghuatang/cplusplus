@@ -3,6 +3,7 @@
 #include <iostream>
 using namespace std;
 
+
 int i = 10;  // variable declaration and assignment; i is lvalue, 10 is rvalue
 // 10 = i doesn't work!
 int a = i;  // both a and i are lvalues!
@@ -33,6 +34,7 @@ void increment_B(int&& i) {
 
 int main() {
     int num = 34;
+    
     increment_A(num);  // pass lvalue as argument, it works
     // increment_A(45);  // pass rvalue, doesn't work!
 

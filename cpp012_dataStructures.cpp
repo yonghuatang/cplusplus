@@ -10,7 +10,7 @@ int arr2[] = {1, 2, 3, 4, 5};  // explicit initialisation
 int arr3[5] = {1, 2, 3, 4, 5};  // declare the size and initialise elements at the same time
 
 
-/* === Vectors are dynamic arrays === */
+/* === Vector: dynamic arrays === */
 
 vector<int> vec;
 // vec.push_back()
@@ -78,15 +78,18 @@ map<char, int> myMap;
 //     cout << it->first << "=>" << it->second << endl;
 // }
 
+
+/* === Pair: stores unique keys in sorted order === */
+
+pair<int, int> myPair;
+
+// auto p = std::make_pair(88, 99);
+// cout << "Pair: " << myPair.first << " " << myPair.second << endl;
+
+
+
+
 int main() {
-    myMap['a'] = 10;
-    myMap['b'] = 20;
-    myMap['c'] = 30;
-    myMap['d'] = 40;
-    map<char, int>::iterator it;
-    for (it=myMap.begin(); it!=myMap.end(); it++) {
-        cout << it->first << " => " << it->second << endl;
-    }
     return 0;
 }
 

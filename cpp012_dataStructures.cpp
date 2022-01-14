@@ -20,17 +20,17 @@ vector<int> vec;
 /* === Stack: last-in-first-out === */
 
 stack<int> myStack;
-// myStack.push()  push into the stack
-// myStack.pop()  pop the top element
-// myStack.top()  returns a reference of the top element
+// myStack.push()   push into the stack
+// myStack.pop()    pop the top element
+// myStack.top()    returns a reference of the top element
 // myStack.empty()  checks if the stack is empty
 
 
 /* === Queue: first-in-first-out, enqueue and dequeue === */
 
 queue<int> q;
-// q.push()  enqueue
-// q.pop()  pop (dequeue) the front element
+// q.push()   enqueue
+// q.pop()    pop (dequeue) the front element
 // q.front()  returns a reference of the front element
 // q.empty()  checks if the queue is empty
 
@@ -38,9 +38,9 @@ queue<int> q;
 /* === Priority queue: queue with sorting and priority dequeueing, default is max heap === */
 
 priority_queue<int> pq1;
-// pq.push()  enqueue
-// pq.pop()  pop (dequeue) the top element (with highest priority thereof)
-// pq.top()  returns a reference of the top element
+// pq.push()   enqueue
+// pq.pop()    pop (dequeue) the top element (with highest priority thereof)
+// pq.top()    returns a reference of the top element
 // pq.empty()  checks if the priority_queue is empty
 
 // while (!pq.empty()) {
@@ -73,8 +73,8 @@ map<char, int> myMap;
 // myMap['b'] = 20;
 // myMap['c'] = 30;
 // myMap['d'] = 40;
-// map<char, int>::iterator it;
-// for (it=myMap.begin(); it!=myMap.end(); it++) {
+// /* map<char, int>::iterator it; */
+// for (auto it=myMap.begin(); it!=myMap.end(); it++) {
 //     cout << it->first << "=>" << it->second << endl;
 // }
 
@@ -92,4 +92,3 @@ pair<int, int> myPair;
 int main() {
     return 0;
 }
-

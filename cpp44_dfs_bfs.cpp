@@ -1,12 +1,12 @@
-// Depth-First Search (DFS) and Breadth-First Search (BFS)??? Implementation
+// Graph Traversals: Depth-First Search (DFS) and Breadth-First Search (BFS) --- Implementation
 // Compiled using C++20 (g++ -std=c++2a)
+// James Tang - 16 January 2022
+
 #include <iostream>
 #include <vector>
 #include <map>
 using namespace std;
 
-
-// make it class template??
 class Graph {
     private:
         map<int, vector<int>> adj; // Adjacency list
@@ -25,6 +25,11 @@ class Graph {
                 cout << "=== Warning: Neighbour cannot be self. Node: " << node << " Neighbour: " << neighbour << " ===" << endl;
             } else {
                 adj[node].push_back(neighbour);
+                // If a node shares an edge with its neighbour, then from neighbour's perspective
+                // it should also share the same edge.
+                if (!adjacent(neighbour, node)) {
+                    adj[neighbour].push_back(node);
+                }
             }
         }
 
@@ -37,18 +42,56 @@ class Graph {
                     cout << "=== Warning: Neighbour cannot be self. Node: " << node << " Neighbour: " << i << " ===" << endl;
                 } else {
                     adj[node].push_back(i);
+                    // If a node shares an edge with its neighbour, then from neighbour's perspective
+                    // it should also share the same edge.
+                    if (!adjacent(i, node)) {
+                        adj[i].push_back(node);
+                    }
                 }
             }
         }
 
         // Removes an edge
-        void removeEdge() {}
+        void removeEdge(int node, int neighbour) {
+            if (!nodeExists(node) || !nodeExists(neighbour)) {
+                cout << "Edge does not exist to be removed." << endl;
+                return;  // Exits the function at this point
+            }
+            adj[node].erase(std::remove(adj[node].begin(), adj[node].end(), neighbour), adj[node].end());
+            adj[neighbour].erase(std::remove(adj[neighbour].begin(), adj[neighbour].end(), node), adj[neighbour].end());
+        }
 
-        void addNode() {}
+        // Adds a new (dangling) node 
+        void addNode(int node) {
+            if (!nodeExists(node)) {
+                adj[node];
+            } else {
+                cout << "Warning: Node: " << node << " already exists." << endl;
+            }
+        }
 
-        void addNode(int node) {/* overload */}
+        // Overloads addNode by accepting vector as input parameter
+        void addNode(vector<int> nodes) {
+            for (int i : nodes) {
+                if (!nodeExists(i)) {
+                    adj[i];
+                }
+            }
+        }
 
-        void removeNode() {}
+        // Removes a node
+        void removeNode(int node) {
+            if (!nodeExists(node)) {
+                cout << "Node: " << node << " does not exist to be removed." << endl;
+                return;
+            }
+            auto wasNeighbours = neighbours(node);
+            adj.erase(node);
+            for (auto neighbour : wasNeighbours) {
+                adj[neighbour].erase(std::remove(adj[neighbour].begin(), adj[neighbour].end(), node), adj[neighbour].end());  // Erase-remove idiom
+            }
+            cout << "Node: " << node << " and its neighbours' reference to it has been removed" << endl;
+        }
 
         // Checks whether a node exists
         bool nodeExists(int node) {
@@ -72,8 +115,14 @@ class Graph {
         }
 
         // Returns all the neighbours of a particular node
+        // To find number of neighbours call neighbours().size()
         vector<int> neighbours(int node) {
             return adj[node];
+        }
+
+        // Checks whether a node is dangling (i.e. not connected to any other nodes)
+        bool checkDangling(int node) {
+            return (adj[node].size() == 0 ? true : false);
         }
 
         // A function to print all elements in a vector
@@ -134,12 +183,6 @@ class Graph {
         }
 };
 
-
-/*
-add_vertex(G, x): adds the vertex x, if it is not there;
-remove_vertex(G, x): removes the vertex x, if it is there;
-remove_edge(G, x, y): removes the edge from the vertex x to the vertex y, if it is there;
-*/
 int main() {
     Graph g;
 
@@ -150,16 +193,11 @@ int main() {
     g.addEdge(1, 2);
     g.addEdge(2, 0);
     g.addEdge(2, 1);
-    g.addEdge(2, 1);
     g.addEdge(2, {1, 2, 3});
-    cout << g.adjacent(1, 2) << endl;
-    cout << g.adjacent(1, 3) << endl;
-    cout << g.adjacent(1, 10) << endl;
-    cout << g.adjacent(3, 2) << endl;
+    g.addNode(89);
 
     g.printAll();
-    g.resetAdj();
-    g.printAll();
+
 
     return 0;
 }

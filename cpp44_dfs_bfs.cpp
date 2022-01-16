@@ -1,9 +1,12 @@
 // Depth-First Search (DFS) and Breadth-First Search (BFS)??? Implementation
+// Compiled using C++20 (g++ -std=c++2a)
 #include <iostream>
-#include <algorithm>
+#include <vector>
 #include <map>
 using namespace std;
 
+
+// make it class template??
 class Graph {
     private:
         map<int, vector<int>> adj; // Adjacency list
@@ -17,7 +20,7 @@ class Graph {
         // Adds an edge connecting two nodes (vertices)
         void addEdge(int node, int neighbour) {
             if (adjacent(node, neighbour)) {
-                cout << "Invalid: Duplicate adjacent neighbour found. Node: " << node << " Neighbour: " << neighbour << endl;
+                cout << "Invalid: Duplicate adjacent neighbour found./Edge already exists. Node: " << node << " Neighbour: " << neighbour << endl;
             } else {
                 adj[node].push_back(neighbour);
             }
@@ -34,34 +37,46 @@ class Graph {
             }
         }
 
-        void removeEdge() {
-
-        }
+        // Removes an edge
+        void removeEdge() {}
 
         void addNode() {}
 
-        void addNode() {/* overload */}
+        void addNode(int node) {/* overload */}
 
         void removeNode() {}
 
-        bool adjacent(int node, int neighbour) const {
-            if (std::find(adj[node].begin(), adj[node].end(), neighbour) != adj[node].end()) {
+        // Evaluates whether if a neighbour is adjacent to a node
+        bool adjacent(int node, int neighbour) {
+            auto temp_adj = adj[node];
+            if (std::find(temp_adj.begin(), temp_adj.end(), neighbour) != temp_adj.end()) {
                 return true;
             }
             return false;
         }
 
-        vector<int> neighbours(int node) const {
+        // Returns all the neighbours of a particular node
+        vector<int> neighbours(int node) {
             return adj[node];
+        }
+
+        // A function to print all elements in a vector
+        void printVector(vector<int> v) const {
+            for (int i : v) {
+                cout << i << " ";
+            }
         }
 
         // Prints all nodes and their neighbours in the graph
         void printAll() {
             for (auto it=adj.begin(); it!=adj.end(); it++) {
-                cout << "Node: " << it->first << " Neighbour(s): " << it->second << endl;
+                cout << "Node: " << it->first << "     Neighbour(s): ";
+                printVector(it->second);
+                cout << "\n";
             }
         }
 
+        // Depth-first search
         void dfs(int s) {
             if (visited[s]) {
                 return;  // exits the function, return void
@@ -74,8 +89,25 @@ class Graph {
             }
         }
 
+        // 
         void bfs() {
             // ???
+        }
+
+        // Resets (clears) the adjacency list
+        void resetAdj() {
+            adj.clear();
+            if (!adj.empty()) {
+                cout << "Error resetting Graph::adj" << endl;
+            }
+        }
+
+        // Resets (clears) the visited list
+        void resetVisited() {
+            visited.clear();
+            if (!visited.empty()) {
+                cout << "Error resetting Graph::visited" << endl;
+            }
         }
 };
 
@@ -88,7 +120,9 @@ remove_edge(G, x, y): removes the edge from the vertex x to the vertex y, if it 
 int main() {
     Graph g;
     // Construct the graph by populating the adjacency list
-    g.addEdge();
+    g.addEdge(0, 1);
+    g.addEdge(0, 2);
+    g.printAll();
 
     return 0;
 }

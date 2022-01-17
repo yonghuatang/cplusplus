@@ -1,4 +1,4 @@
-// Graph Traversals: Depth-First Search (DFS) and Breadth-First Search (BFS) --- Implementation
+// Undirected Graph Traversals: Depth-First Search (DFS) and Breadth-First Search (BFS) --- Implementation
 // Compiled using C++20 (g++ -std=c++2a)
 // James Tang - 16 January 2022
 
@@ -10,7 +10,7 @@ using namespace std;
 class Graph {
     private:
         map<int, vector<int>> adj; // Adjacency list
-        map<int, bool> visited;
+        map<int, bool> visited;  // Visited list
 
     public:
         Graph() { cout << "A graph is created." << endl; }  // Constructor
@@ -25,10 +25,12 @@ class Graph {
                 cout << "=== Warning: Neighbour cannot be self. Node: " << node << " Neighbour: " << neighbour << " ===" << endl;
             } else {
                 adj[node].push_back(neighbour);
+                visited[node] = false;
                 // If a node shares an edge with its neighbour, then from neighbour's perspective
                 // it should also share the same edge.
                 if (!adjacent(neighbour, node)) {
                     adj[neighbour].push_back(node);
+                    visited[neighbour] = false;
                 }
             }
         }
@@ -42,10 +44,12 @@ class Graph {
                     cout << "=== Warning: Neighbour cannot be self. Node: " << node << " Neighbour: " << i << " ===" << endl;
                 } else {
                     adj[node].push_back(i);
+                    visited[i] = false;
                     // If a node shares an edge with its neighbour, then from neighbour's perspective
                     // it should also share the same edge.
                     if (!adjacent(i, node)) {
                         adj[i].push_back(node);
+                        visited[node] = false;
                     }
                 }
             }
@@ -57,11 +61,12 @@ class Graph {
                 cout << "Edge does not exist to be removed." << endl;
                 return;  // Exits the function at this point
             }
+            // Erase-remove idiom
             adj[node].erase(std::remove(adj[node].begin(), adj[node].end(), neighbour), adj[node].end());
             adj[neighbour].erase(std::remove(adj[neighbour].begin(), adj[neighbour].end(), node), adj[neighbour].end());
         }
 
-        // Adds a new (dangling) node 
+        // Adds a new (isolated) node 
         void addNode(int node) {
             if (!nodeExists(node)) {
                 adj[node];
@@ -88,7 +93,7 @@ class Graph {
             auto wasNeighbours = neighbours(node);
             adj.erase(node);
             for (auto neighbour : wasNeighbours) {
-                adj[neighbour].erase(std::remove(adj[neighbour].begin(), adj[neighbour].end(), node), adj[neighbour].end());  // Erase-remove idiom
+                adj[neighbour].erase(std::remove(adj[neighbour].begin(), adj[neighbour].end(), node), adj[neighbour].end());
             }
             cout << "Node: " << node << " and its neighbours' reference to it has been removed" << endl;
         }
@@ -120,11 +125,6 @@ class Graph {
             return adj[node];
         }
 
-        // Checks whether a node is dangling (i.e. not connected to any other nodes)
-        bool checkDangling(int node) {
-            return (adj[node].size() == 0 ? true : false);
-        }
-
         // A function to print all elements in a vector
         void printVector(vector<int> v) const {
             for (int i : v) {
@@ -132,8 +132,26 @@ class Graph {
             }
         }
 
+        // Checks whether a node is isolated (i.e. not connected to any other nodes)
+        void printIsolated() {
+            vector<int> isolated;
+            if (adj.empty()) {
+                cout << "Adjacency list is empty." << endl;
+                return;
+            }
+            for (auto it=adj.begin(); it!=adj.end(); it++) {
+                if (it->second.size() == 0) {
+                    isolated.push_back(it->first);
+                }
+                cout << "\n";
+            }
+            cout << "Isolated vertices: " ;
+            printVector(isolated);
+            cout << "\n";
+        }
+
         // Prints all nodes and their neighbours in the graph
-        void printAll() {
+        void printGraph() {
             if (adj.empty()) {
                 cout << "Adjacency list is empty." << endl;
                 return;
@@ -145,7 +163,7 @@ class Graph {
             }
         }
 
-        // Depth-first search
+        // Depth-first search (DFS)
         void dfs(int s) {
             resetVisited(); // ??
             if (visited[s]) {
@@ -159,7 +177,7 @@ class Graph {
             }
         }
 
-        // 
+        // Breadth-first search (BFS)
         void bfs() {
             // ???
         }
@@ -196,8 +214,7 @@ int main() {
     g.addEdge(2, {1, 2, 3});
     g.addNode(89);
 
-    g.printAll();
-
+    g.printGraph();
 
     return 0;
 }

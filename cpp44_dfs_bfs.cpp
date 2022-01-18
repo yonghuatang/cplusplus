@@ -163,9 +163,19 @@ class Graph {
             }
         }
 
+        // Prints visited status of all nodes
+        void printVisited() {
+            if (visited.empty()) {
+                cout << "Visited list is empty." << endl;
+                return;
+            }
+            for (auto it=visited.begin(); it!=visited.end(); it++) {
+                cout << "Node: " << it->first << "     Visited: " << (it->second ? "YES" : "NO") << endl;
+            }
+        }
+
         // Depth-first search (DFS)
         void dfs(int s) {
-            resetVisited(); // ??
             if (visited[s]) {
                 return;  // exits the function, return void
             }
@@ -180,24 +190,6 @@ class Graph {
         // Breadth-first search (BFS)
         void bfs() {
             // ???
-        }
-
-        // Resets (clears) the adjacency list
-        void resetAdj() {
-            adj.clear();
-            cout << "Adjacency list resetted." << endl;
-            if (!adj.empty()) {
-                cout << "Error resetting Graph::adj" << endl;
-            }
-        }
-
-        // Resets (clears) the visited list
-        void resetVisited() {
-            visited.clear();
-            cout << "Visited list resetted." << endl;
-            if (!visited.empty()) {
-                cout << "Error resetting Graph::visited" << endl;
-            }
         }
 };
 

@@ -7,22 +7,38 @@
 #include <map>
 using namespace std;
 
+#define VERBOSE  // high verbosity
+
 class Graph {
     private:
         map<int, vector<int>> adj; // Adjacency list
         map<int, bool> visited;  // Visited list
 
     public:
-        Graph() { cout << "A graph is created." << endl; }  // Constructor
+        // Constructor
+        Graph() {
+            #ifdef VERBOSE
+            cout << "A graph is created." << endl;
+            #endif  // VERBOSE
+        }
 
-        ~Graph() { cout << "A graph is destroyed." << endl; }  // Destructor
+        // Destructor
+        ~Graph() {
+            #ifdef VERBOSE
+            cout << "A graph is destroyed." << endl;
+            #endif  // VERBOSE
+        }
 
         // Adds an edge connecting two nodes (vertices)
         void addEdge(int node, int neighbour) {
             if (adjacent(node, neighbour)) {
+                #ifdef VERBOSE
                 cout << "=== Warning: Edge already exists. Node: " << node << " Neighbour: " << neighbour << " ===" << endl;
+                #endif  // VERBOSE
             } else if (node == neighbour) {
+                #ifdef VERBOSE
                 cout << "=== Warning: Neighbour cannot be self. Node: " << node << " Neighbour: " << neighbour << " ===" << endl;
+                #endif  // VERBOSE
             } else {
                 adj[node].push_back(neighbour);
                 visited[node] = false;
@@ -39,9 +55,13 @@ class Graph {
         void addEdge(int node, vector<int> neighbours) {
             for (int i : neighbours) {
                 if (adjacent(node, i)) {
+                    #ifdef VERBOSE
                     cout << "=== Warning: Edge already exists. Node: " << node << " Neighbour: " << i << " ===" << endl;
+                    #endif  // VERBOSE
                 } else if (node == i) {
+                    #ifdef VERBOSE
                     cout << "=== Warning: Neighbour cannot be self. Node: " << node << " Neighbour: " << i << " ===" << endl;
+                    #endif  // VERBOSE
                 } else {
                     adj[node].push_back(i);
                     visited[i] = false;
@@ -58,7 +78,9 @@ class Graph {
         // Removes an edge
         void removeEdge(int node, int neighbour) {
             if (!nodeExists(node) || !nodeExists(neighbour)) {
+                #ifdef VERBOSE
                 cout << "Edge does not exist to be removed." << endl;
+                #endif  // VERBOSE
                 return;  // Exits the function at this point
             }
             // Erase-remove idiom
@@ -70,8 +92,11 @@ class Graph {
         void addNode(int node) {
             if (!nodeExists(node)) {
                 adj[node];
+                visited[node] = false;
             } else {
+                #ifdef VERBOSE
                 cout << "Warning: Node: " << node << " already exists." << endl;
+                #endif  // VERBOSE
             }
         }
 
@@ -79,7 +104,12 @@ class Graph {
         void addNode(vector<int> nodes) {
             for (int i : nodes) {
                 if (!nodeExists(i)) {
-                    adj[i];
+                    adj[i];  // adds key to map without corresponding value
+                    visited[i] = false;
+                } else {
+                    #ifdef VERBOSE
+                    cout << "Warning: Node: " << i << " already exists." << endl;
+                    #endif  // VERBOSE
                 }
             }
         }
@@ -87,7 +117,9 @@ class Graph {
         // Removes a node
         void removeNode(int node) {
             if (!nodeExists(node)) {
+                #ifdef VERBOSE
                 cout << "Node: " << node << " does not exist to be removed." << endl;
+                #endif  // VERBOSE
                 return;
             }
             auto wasNeighbours = neighbours(node);
@@ -95,7 +127,9 @@ class Graph {
             for (auto neighbour : wasNeighbours) {
                 adj[neighbour].erase(std::remove(adj[neighbour].begin(), adj[neighbour].end(), node), adj[neighbour].end());
             }
+            #ifdef VERBOSE
             cout << "Node: " << node << " and its neighbours' reference to it has been removed" << endl;
+            #endif  // VERBOSE
         }
 
         // Checks whether a node exists
@@ -136,7 +170,9 @@ class Graph {
         void printIsolated() {
             vector<int> isolated;
             if (adj.empty()) {
+                #ifdef VERBOSE
                 cout << "Adjacency list is empty." << endl;
+                #endif  // VERBOSE
                 return;
             }
             for (auto it=adj.begin(); it!=adj.end(); it++) {
@@ -153,7 +189,9 @@ class Graph {
         // Prints all nodes and their neighbours in the graph
         void printGraph() {
             if (adj.empty()) {
+                #ifdef VERBOSE
                 cout << "Adjacency list is empty." << endl;
+                #endif  // VERBOSE
                 return;
             }
             for (auto it=adj.begin(); it!=adj.end(); it++) {
@@ -166,7 +204,9 @@ class Graph {
         // Prints visited status of all nodes
         void printVisited() {
             if (visited.empty()) {
+                #ifdef VERBOSE
                 cout << "Visited list is empty." << endl;
+                #endif  // VERBOSE
                 return;
             }
             for (auto it=visited.begin(); it!=visited.end(); it++) {
@@ -182,7 +222,7 @@ class Graph {
             visited[s] = true;
             for (auto node : adj[s]) {
                 if (!visited[node]) {
-                    dfs(node);  // recursion
+                    dfs(node);  // recursion??
                 }
             }
         }
@@ -207,6 +247,7 @@ int main() {
     g.addNode(89);
 
     g.printGraph();
+    g.printVisited();
 
     return 0;
 }

@@ -1,6 +1,11 @@
-// Undirected Graph Traversals: Depth-First Search (DFS) and Breadth-First Search (BFS) --- Implementation
-// Compiled using C++20 (g++ -std=c++2a)
-// James Tang - 16 January 2022
+/*
+Undirected Graph Traversals:
+1. Depth-First Search (DFS)
+2. Breadth-First Search (BFS)
+3. Dijkstra's Algorithm
+Compiled using C++20 (g++ -std=c++2a)
+James Tang - 16 January 2022
+*/
 
 #include <iostream>
 #include <vector>
@@ -11,7 +16,9 @@ using namespace std;
 
 #define VERBOSE_WARNING  // high verbosity
 
-class Graph {
+
+// For an undirected graph G(V,E), every pair of unordered nodes (or vertices) (vi,vj) forms an edge
+class undirectedGraph {
     private:
         map<int, vector<int>> adj; // Adjacency list
         map<int, bool> visited;  // Visited list
@@ -21,16 +28,16 @@ class Graph {
 
     public:
         // Constructor
-        Graph() {
+        undirectedGraph() {
             cout << "A graph is created." << endl;
         }
 
         // Destructor
-        ~Graph() {
+        ~undirectedGraph() {
             cout << "A graph is destroyed." << endl;
         }
 
-        // Adds an edge connecting two nodes (vertices)
+        // Adds an edge connecting two nodes
         void addEdge(int node, int neighbour, int weight=0) {
             if (adjacent(node, neighbour)) {
                 #ifdef VERBOSE_WARNING
@@ -38,14 +45,14 @@ class Graph {
                 #endif  // VERBOSE_WARNING
             } else if (node == neighbour) {
                 #ifdef VERBOSE_WARNING
-                cout << "=== Warning: Neighbour cannot be self. Node: " << node << " Neighbour: " << neighbour << " ===" << endl;
+                cout << "=== Warning: Neighbour cannot be self (loop). Node: " << node << " Neighbour: " << neighbour << " ===" << endl;
                 #endif  // VERBOSE_WARNING
             } else {
                 adj[node].push_back(neighbour);
                 visited[node] = false;
                 edgeWeight[node].push_back(make_pair(neighbour, weight));
-                // If a node shares an edge with its neighbour, then from neighbour's perspective
-                // it should also share the same edge.
+                // If a node shares an edge with its neighbour, then from the neighbour's perspective
+                // it should also share the same edge, i.e., the adjacency list (matrix) is symmetric.
                 if (!adjacent(neighbour, node)) {
                     adj[neighbour].push_back(node);
                     visited[neighbour] = false;
@@ -70,7 +77,7 @@ class Graph {
                     #endif  // VERBOSE_WARNING
                 } else if (node == i) {
                     #ifdef VERBOSE_WARNING
-                    cout << "=== Warning: Neighbour cannot be self. Node: " << node << " Neighbour: " << i << " ===" << endl;
+                    cout << "=== Warning: Neighbour cannot be self (loop). Node: " << node << " Neighbour: " << i << " ===" << endl;
                     #endif  // VERBOSE_WARNING
                 } else {
                     adj[node].push_back(i);
@@ -161,10 +168,20 @@ class Graph {
             return false;
         }
 
-        // Returns all the neighbours of a particular node
+        // Returns the degree (number of neighbours) of a particular node
         // To find number of neighbours call neighbours().size()
         vector<int> neighbours(int node) {
             return adj[node];
+        }
+
+        // Checks whether that all the nodes are visited
+        bool allVisited() const {
+            for (auto it=visited.begin(); it!=visited.end(); it++) {
+                if (!it->second) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         // A function to print all elements in a vector
@@ -246,7 +263,7 @@ class Graph {
         }
 
         // Depth-first search (DFS)
-        void dfs(int s/*, int rootNode ??*/) {
+        void dfs(int s/*, int startNode ??*/) {
             static bool checked{false}; // ??
             if (!checked) {
                 cout << "RUNNING CHECKED" << endl;  // FOR DEBUG
@@ -269,9 +286,33 @@ class Graph {
         }
 
         // Breadth-first search (BFS)
-        void bfs() {
-            // ???
+        void bfs(int startNode) {
+            cout << "=== Breadth-first search (BFS) ===" << endl;
+            int depth = 0;
+            map<int, int> label;
+            visited[startNode] = true;
+            label[startNode] = depth;
+            cout << "Depth: 0     Node: " << startNode << endl;
+            while (!allVisited()) {
+                for (auto it=label.begin(); it!=label.end(); it++) {
+                    if (it->second == depth) {
+                        cout << "Depth: " << depth + 1 << "     Node(s): ";
+                        for (auto i : neighbours(it->first)) {
+                            if (!visited[i]) {
+                                visited[i] = true;
+                                label[i] = depth + 1;
+                                cout << i << " ";
+                            }
+                        }
+                        cout << "\n";
+                    }
+                }
+                depth++;
+            }
         }
+
+        // Dijkstra's algorithm
+        void dijkstra() {}
 };
 
 /* ----------------- Example -----------------
@@ -289,7 +330,7 @@ class Graph {
 
 int main() {
     // Create a Graph object
-    Graph g;
+    undirectedGraph g;
 
     // Construct the graph by populating the adjacency list
     g.addEdge(0, 1);
@@ -306,8 +347,9 @@ int main() {
 
     // After constructing the graph we can manipulate it
     g.printGraph();
-    // g.printVisited();
-    g.printWeight();
+    g.bfs(0);
+    g.printVisited();
+    // g.printWeight();
     // g.dfs();
     // g.printGraph();  // should be the same graph
     // g.printVisited();  // should be all true

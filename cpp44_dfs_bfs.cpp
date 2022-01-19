@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <stack>
+
 using namespace std;
 
 #define VERBOSE_WARNING  // high verbosity
@@ -14,7 +15,9 @@ class Graph {
     private:
         map<int, vector<int>> adj; // Adjacency list
         map<int, bool> visited;  // Visited list
+        map<int, vector<std::pair<int, int>>> edgeWeight;  // Weight of each edge, default is zero
         stack<int> cache;  // Stack implementation of DFS
+        
 
     public:
         // Constructor
@@ -28,7 +31,7 @@ class Graph {
         }
 
         // Adds an edge connecting two nodes (vertices)
-        void addEdge(int node, int neighbour) {
+        void addEdge(int node, int neighbour, int weight=0) {
             if (adjacent(node, neighbour)) {
                 #ifdef VERBOSE_WARNING
                 cout << "=== Warning: Edge already exists. Node: " << node << " Neighbour: " << neighbour << " ===" << endl;
@@ -40,18 +43,27 @@ class Graph {
             } else {
                 adj[node].push_back(neighbour);
                 visited[node] = false;
+                edgeWeight[node].push_back(make_pair(neighbour, weight));
                 // If a node shares an edge with its neighbour, then from neighbour's perspective
                 // it should also share the same edge.
                 if (!adjacent(neighbour, node)) {
                     adj[neighbour].push_back(node);
                     visited[neighbour] = false;
+                    edgeWeight[neighbour].push_back(make_pair(node, weight));
                 }
             }
         }
 
         // Overloads addEdge by accepting vector as input parameter
-        void addEdge(int node, vector<int> neighbours) {
+        void addEdge(int node, vector<int> neighbours, vector<int> weights = {}) {
+            if ((weights.size() != 0) && (neighbours.size() != weights.size())) {
+                cout << "Neighbours and weights not compatible in size." << endl;
+                return;
+            }
+            int weightIndex = -1;
             for (int i : neighbours) {
+                weightIndex++;
+                int weight = (weights.size()==0 ? 0 : weights[weightIndex]);
                 if (adjacent(node, i)) {
                     #ifdef VERBOSE_WARNING
                     cout << "=== Warning: Edge already exists. Node: " << node << " Neighbour: " << i << " ===" << endl;
@@ -63,11 +75,13 @@ class Graph {
                 } else {
                     adj[node].push_back(i);
                     visited[i] = false;
+                    edgeWeight[node].push_back(make_pair(i, weight));
                     // If a node shares an edge with its neighbour, then from neighbour's perspective
                     // it should also share the same edge.
                     if (!adjacent(i, node)) {
                         adj[i].push_back(node);
                         visited[node] = false;
+                        edgeWeight[i].push_back(make_pair(node, weight));
                     }
                 }
             }
@@ -82,6 +96,7 @@ class Graph {
             // Erase-remove idiom
             adj[node].erase(std::remove(adj[node].begin(), adj[node].end(), neighbour), adj[node].end());
             adj[neighbour].erase(std::remove(adj[neighbour].begin(), adj[neighbour].end(), node), adj[neighbour].end());
+            // remove edge weight also!!
         }
 
         // Adds a new (isolated) node 
@@ -122,6 +137,7 @@ class Graph {
                 adj[neighbour].erase(std::remove(adj[neighbour].begin(), adj[neighbour].end(), node), adj[neighbour].end());
             }
             cout << "Node: " << node << " and its neighbours' reference to it has been removed" << endl;
+            // remove edge weight also!!
         }
 
         // Checks whether a node exists
@@ -207,9 +223,25 @@ class Graph {
                 cout << "Visited list is empty." << endl;
                 return;
             }
-            cout << "=== Visited ===" << endl;
+            cout << "=== Visited list ===" << endl;
             for (auto it=visited.begin(); it!=visited.end(); it++) {
                 cout << "Node: " << it->first << "     Visited: " << (it->second ? "YES" : "NO") << endl;
+            }
+        }
+
+        // Prints weight of all edges
+        void printWeight() {
+            if (edgeWeight.empty()) {
+                cout << "Edge-weight list is empty." << endl;
+                return;
+            }
+            cout << "=== Edge-weight list===" << endl;
+            for (auto it=edgeWeight.begin(); it!=edgeWeight.end(); it++) {
+                cout << "Node: " << it->first << "     Neighbours: ";
+                for (auto i : it->second) {
+                    cout << i.first << "=" << i.second << " ";
+                }
+                cout << "\n";
             }
         }
 
@@ -274,10 +306,75 @@ int main() {
 
     // After constructing the graph we can manipulate it
     g.printGraph();
-    g.printVisited();
-    g.dfs();
-    g.printGraph();  // should be the same graph
-    g.printVisited();  // should be all true
+    // g.printVisited();
+    g.printWeight();
+    // g.dfs();
+    // g.printGraph();  // should be the same graph
+    // g.printVisited();  // should be all true
 
     return 0;
 }
+
+/* OUTPUT (with VERBOSE_WARNING)
+A graph is created.
+=== Warning: Edge already exists. Node: 1 Neighbour: 0 ===
+=== Warning: Edge already exists. Node: 2 Neighbour: 1 ===
+=== Warning: Edge already exists. Node: 3 Neighbour: 1 ===
+=== Warning: Edge already exists. Node: 3 Neighbour: 2 ===
+=== Warning: Edge already exists. Node: 4 Neighbour: 2 ===
+=== Warning: Edge already exists. Node: 5 Neighbour: 4 ===
+=== Warning: Edge already exists. Node: 6 Neighbour: 5 ===
+=== Warning: Edge already exists. Node: 7 Neighbour: 5 ===
+=== Warning: Edge already exists. Node: 8 Neighbour: 7 ===
+=== Warning: Edge already exists. Node: 9 Neighbour: 5 ===
+=== Warning: Edge already exists. Node: 10 Neighbour: 9 ===
+=== Adjacency list ===
+Node: 0     Neighbour(s): 1
+Node: 1     Neighbour(s): 0 2 3
+Node: 2     Neighbour(s): 1 3 4
+Node: 3     Neighbour(s): 1 2
+Node: 4     Neighbour(s): 2 5
+Node: 5     Neighbour(s): 4 6 7 9
+Node: 6     Neighbour(s): 5
+Node: 7     Neighbour(s): 5 8
+Node: 8     Neighbour(s): 7
+Node: 9     Neighbour(s): 5 10
+Node: 10     Neighbour(s): 9
+=== Visited ===
+Node: 0     Visited: NO
+Node: 1     Visited: NO
+Node: 2     Visited: NO
+Node: 3     Visited: NO
+Node: 4     Visited: NO
+Node: 5     Visited: NO
+Node: 6     Visited: NO
+Node: 7     Visited: NO
+Node: 8     Visited: NO
+Node: 9     Visited: NO
+Node: 10     Visited: NO
+=== Adjacency list ===
+Node: 0     Neighbour(s): 1
+Node: 1     Neighbour(s): 0 2 3
+Node: 2     Neighbour(s): 1 3 4
+Node: 3     Neighbour(s): 1 2
+Node: 4     Neighbour(s): 2 5
+Node: 5     Neighbour(s): 4 6 7 9
+Node: 6     Neighbour(s): 5
+Node: 7     Neighbour(s): 5 8
+Node: 8     Neighbour(s): 7
+Node: 9     Neighbour(s): 5 10
+Node: 10     Neighbour(s): 9 
+=== Visited ===
+Node: 0     Visited: NO
+Node: 1     Visited: NO
+Node: 2     Visited: NO
+Node: 3     Visited: NO
+Node: 4     Visited: NO
+Node: 5     Visited: NO
+Node: 6     Visited: NO
+Node: 7     Visited: NO
+Node: 8     Visited: NO
+Node: 9     Visited: NO
+Node: 10     Visited: NO
+A graph is destroyed.
+*/

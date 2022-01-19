@@ -158,8 +158,19 @@ class Graph {
             }
         }
 
+        // A function to print all elements in a stack
+        void printStack() const {
+            auto cacheTemp = cache;  // Create a copy of cache
+            string output = "";
+            while (!cacheTemp.empty()) {
+                output = to_string(cacheTemp.top()) + " => " + output;
+                cacheTemp.pop();
+            }
+            cout << "| " << output << endl;
+        }
+
         // Checks whether a node is isolated (i.e. not connected to any other nodes)
-        void printIsolated() {
+        void printIsolated() const {
             vector<int> isolated;
             if (adj.empty()) {
                 cout << "Adjacency list is empty." << endl;
@@ -177,11 +188,12 @@ class Graph {
         }
 
         // Prints all nodes and their neighbours in the graph
-        void printGraph() {
+        void printGraph() const {
             if (adj.empty()) {
                 cout << "Adjacency list is empty." << endl;
                 return;
             }
+            cout << "=== Adjacency list ===" << endl;
             for (auto it=adj.begin(); it!=adj.end(); it++) {
                 cout << "Node: " << it->first << "     Neighbour(s): ";
                 printVector(it->second);
@@ -190,13 +202,12 @@ class Graph {
         }
 
         // Prints visited status of all nodes
-        void printVisited() {
+        void printVisited() const {
             if (visited.empty()) {
-                #ifdef VERBOSE
                 cout << "Visited list is empty." << endl;
-                #endif  // VERBOSE
                 return;
             }
+            cout << "=== Visited ===" << endl;
             for (auto it=visited.begin(); it!=visited.end(); it++) {
                 cout << "Node: " << it->first << "     Visited: " << (it->second ? "YES" : "NO") << endl;
             }
@@ -215,6 +226,8 @@ class Graph {
                 return;  // exits the function, return void
             } else {
                 visited[s] = true;
+                cache.push(s);  // ??
+                printStack();
                 for (auto node : adj[s]) {
                     if (!visited[node]) {
                         dfs(node);  // recursion??
@@ -229,21 +242,42 @@ class Graph {
         }
 };
 
+/* ----------------- Example -----------------
+
+    0                       6
+      \                     |
+        \                   |
+          1 - - 2 - - 4 - - 5 - - 7 - - 8
+          |     |           |
+          \     /           |
+             3              9 - - 10
+
+
+--------------------------------------------*/
+
 int main() {
+    // Create a Graph object
     Graph g;
 
     // Construct the graph by populating the adjacency list
     g.addEdge(0, 1);
-    g.addEdge(0, 2);
-    g.addEdge(1, 0);
-    g.addEdge(1, 2);
-    g.addEdge(2, 0);
-    g.addEdge(2, 1);
-    g.addEdge(2, {1, 2, 3});
-    g.addNode(89);
+    g.addEdge(1, {0, 2, 3});
+    g.addEdge(2, {1, 3, 4});
+    g.addEdge(3, {1, 2});
+    g.addEdge(4, {2, 5});
+    g.addEdge(5, {4, 6, 7, 9});
+    g.addEdge(6, 5);
+    g.addEdge(7, {5, 8});
+    g.addEdge(8, 7);
+    g.addEdge(9, {5, 10});
+    g.addEdge(10, 9);
 
+    // After constructing the graph we can manipulate it
     g.printGraph();
     g.printVisited();
+    g.dfs();
+    g.printGraph();  // should be the same graph
+    g.printVisited();  // should be all true
 
     return 0;
 }

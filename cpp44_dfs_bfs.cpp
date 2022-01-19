@@ -5,40 +5,38 @@
 #include <iostream>
 #include <vector>
 #include <map>
+#include <stack>
 using namespace std;
 
-#define VERBOSE  // high verbosity
+#define VERBOSE_WARNING  // high verbosity
 
 class Graph {
     private:
         map<int, vector<int>> adj; // Adjacency list
         map<int, bool> visited;  // Visited list
+        stack<int> cache;  // Stack implementation of DFS
 
     public:
         // Constructor
         Graph() {
-            #ifdef VERBOSE
             cout << "A graph is created." << endl;
-            #endif  // VERBOSE
         }
 
         // Destructor
         ~Graph() {
-            #ifdef VERBOSE
             cout << "A graph is destroyed." << endl;
-            #endif  // VERBOSE
         }
 
         // Adds an edge connecting two nodes (vertices)
         void addEdge(int node, int neighbour) {
             if (adjacent(node, neighbour)) {
-                #ifdef VERBOSE
+                #ifdef VERBOSE_WARNING
                 cout << "=== Warning: Edge already exists. Node: " << node << " Neighbour: " << neighbour << " ===" << endl;
-                #endif  // VERBOSE
+                #endif  // VERBOSE_WARNING
             } else if (node == neighbour) {
-                #ifdef VERBOSE
+                #ifdef VERBOSE_WARNING
                 cout << "=== Warning: Neighbour cannot be self. Node: " << node << " Neighbour: " << neighbour << " ===" << endl;
-                #endif  // VERBOSE
+                #endif  // VERBOSE_WARNING
             } else {
                 adj[node].push_back(neighbour);
                 visited[node] = false;
@@ -55,13 +53,13 @@ class Graph {
         void addEdge(int node, vector<int> neighbours) {
             for (int i : neighbours) {
                 if (adjacent(node, i)) {
-                    #ifdef VERBOSE
+                    #ifdef VERBOSE_WARNING
                     cout << "=== Warning: Edge already exists. Node: " << node << " Neighbour: " << i << " ===" << endl;
-                    #endif  // VERBOSE
+                    #endif  // VERBOSE_WARNING
                 } else if (node == i) {
-                    #ifdef VERBOSE
+                    #ifdef VERBOSE_WARNING
                     cout << "=== Warning: Neighbour cannot be self. Node: " << node << " Neighbour: " << i << " ===" << endl;
-                    #endif  // VERBOSE
+                    #endif  // VERBOSE_WARNING
                 } else {
                     adj[node].push_back(i);
                     visited[i] = false;
@@ -78,9 +76,7 @@ class Graph {
         // Removes an edge
         void removeEdge(int node, int neighbour) {
             if (!nodeExists(node) || !nodeExists(neighbour)) {
-                #ifdef VERBOSE
                 cout << "Edge does not exist to be removed." << endl;
-                #endif  // VERBOSE
                 return;  // Exits the function at this point
             }
             // Erase-remove idiom
@@ -94,9 +90,9 @@ class Graph {
                 adj[node];
                 visited[node] = false;
             } else {
-                #ifdef VERBOSE
+                #ifdef VERBOSE_WARNING
                 cout << "Warning: Node: " << node << " already exists." << endl;
-                #endif  // VERBOSE
+                #endif  // VERBOSE_WARNING
             }
         }
 
@@ -107,9 +103,9 @@ class Graph {
                     adj[i];  // adds key to map without corresponding value
                     visited[i] = false;
                 } else {
-                    #ifdef VERBOSE
+                    #ifdef VERBOSE_WARNING
                     cout << "Warning: Node: " << i << " already exists." << endl;
-                    #endif  // VERBOSE
+                    #endif  // VERBOSE_WARNING
                 }
             }
         }
@@ -117,9 +113,7 @@ class Graph {
         // Removes a node
         void removeNode(int node) {
             if (!nodeExists(node)) {
-                #ifdef VERBOSE
                 cout << "Node: " << node << " does not exist to be removed." << endl;
-                #endif  // VERBOSE
                 return;
             }
             auto wasNeighbours = neighbours(node);
@@ -127,9 +121,7 @@ class Graph {
             for (auto neighbour : wasNeighbours) {
                 adj[neighbour].erase(std::remove(adj[neighbour].begin(), adj[neighbour].end(), node), adj[neighbour].end());
             }
-            #ifdef VERBOSE
             cout << "Node: " << node << " and its neighbours' reference to it has been removed" << endl;
-            #endif  // VERBOSE
         }
 
         // Checks whether a node exists
@@ -170,9 +162,7 @@ class Graph {
         void printIsolated() {
             vector<int> isolated;
             if (adj.empty()) {
-                #ifdef VERBOSE
                 cout << "Adjacency list is empty." << endl;
-                #endif  // VERBOSE
                 return;
             }
             for (auto it=adj.begin(); it!=adj.end(); it++) {
@@ -189,9 +179,7 @@ class Graph {
         // Prints all nodes and their neighbours in the graph
         void printGraph() {
             if (adj.empty()) {
-                #ifdef VERBOSE
                 cout << "Adjacency list is empty." << endl;
-                #endif  // VERBOSE
                 return;
             }
             for (auto it=adj.begin(); it!=adj.end(); it++) {
@@ -215,14 +203,22 @@ class Graph {
         }
 
         // Depth-first search (DFS)
-        void dfs(int s) {
-            if (visited[s]) {
+        void dfs(int s/*, int rootNode ??*/) {
+            static bool checked{false}; // ??
+            if (!checked) {
+                cout << "RUNNING CHECKED" << endl;  // FOR DEBUG
+                checked = true;
+                if (adj.empty() || visited.empty()) {
+                    cout << "Adjacency list or visited list is empty." << endl;
+                }
+            } else if (visited[s]) {
                 return;  // exits the function, return void
-            }
-            visited[s] = true;
-            for (auto node : adj[s]) {
-                if (!visited[node]) {
-                    dfs(node);  // recursion??
+            } else {
+                visited[s] = true;
+                for (auto node : adj[s]) {
+                    if (!visited[node]) {
+                        dfs(node);  // recursion??
+                    }
                 }
             }
         }

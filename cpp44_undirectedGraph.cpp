@@ -310,10 +310,10 @@ class undirectedGraph {
                 }
                 depth++;
             }
-        }
+        } // BUG!!
 
-        // typedef for Dijkstra's algorithm: <<currentNode, upToDate>, <previousNode, distance>>
-        typedef std::pair<std::pair<int, bool>, std::pair<int, int>> PAIR;
+        // <thisNode, <previousNode, distance>>
+        typedef std::pair<int, std::pair<int, int>> PAIR;
 
         // Comparator structure for priority queue in void dijkstra()
         struct compDijkstra {
@@ -322,31 +322,75 @@ class undirectedGraph {
             }
         };
 
+        // <TYPE, CONTAINER, COMPARATOR>
+        typedef std::priority_queue<PAIR, vector<PAIR>, compDijkstra> PQ;
+
+        // Pops a particular element in a priority queue, because std::priority_queue has no member function to do so
+        PQ popOutdated(PQ pq, int popNode) {
+            PQ pq_new;
+            while (!pq.empty()) {
+                if (pq.top().first != popNode) {
+                    pq_new.push(pq.top());
+                }
+                pq.pop();
+            }
+            return pq_new;
+        }
+
+        //
+        int findWeightInPQ(PQ pq, int thisNode) {
+            PQ pq_temp = pq;
+            int weight = -1;
+            while (!pq_temp.empty()) {
+                if (pq_temp.top().first == thisNode) {
+                    weight = pq_temp.top().second.second;
+                    break;
+                }
+                pq_temp.pop();
+            }
+            return weight;
+        }
+
         // Dijkstra's algorithm
         void dijkstra(int startNode, int targetNode) {
-            std::priority_queue<PAIR, vector<PAIR>, compDijkstra> pq;
+            cout << "=== Dijkstra's algorithm ===" << endl;
+            PQ pq;
             const int INF = 1000000007;
 
-            // Push every node in the graph into the priority queue with distance = INF and 
+            // Pushes every node in the graph into the priority queue with previousNode = INF and distance = INF
             for (auto it=adj.begin(); it!=adj.end(); it++) {
-                pq.push(std::make_pair(std::make_pair(), std::make_pair()));
+                pq.push(std::make_pair(it->first, std::make_pair(INF, INF)));
             }
+
+            // Makes the startNode to have previousNode = -1 and distance = 0
+            pq = popOutdated(pq, startNode);
             pq.push(std::make_pair(startNode, std::make_pair(-1, 0)));
             visited[startNode] = true;
+
+            // While the targetNode is not ordered on top of the priority queue
             while (pq.top().first != targetNode) {
                 const auto currentNode = pq.top().first;
                 const auto currentDistance = pq.top().second.second;
                 visited[currentNode] = true;
                 for (auto adjNode : neighbours(currentNode)) {
                     if (!visited[adjNode]) {
-                        auto it = std::find_if(edgeWeight[currentNode].begin(), edgeWeight[currentNode].end(), [adjNode](pair<int, int> p){p.first == adjNode;});
-                        if () {
+                        for () {
+                            // use for loop instead to access pair in vectors!!
+                        }
+                        auto it = std::find_if(edgeWeight[currentNode].begin(), edgeWeight[currentNode].end(), findAssert);
+                        if (it != edgeWeight[currentNode].end() && currentDistance + it->second < findWeightInPQ(pq, adjNode)) {
+                            pq = popOutdated(pq, adjNode);
                             pq.push(std::make_pair(adjNode, std::make_pair(currentNode, currentDistance + it->second)));
                         }
                     }
                 }
-
             }
+            cout << "Distance/cost to target node: " << pq.top().second.second << endl;
+
+            // Backtrack path from target node to starting node
+            // for () {
+
+            // }
         }
 };
 
@@ -368,21 +412,22 @@ int main() {
     undirectedGraph g;
 
     // Construct the graph by populating the adjacency list
-    g.addEdge(0, 1);
-    g.addEdge(1, {0, 2, 3});
-    g.addEdge(2, {1, 3, 4});
-    g.addEdge(3, {1, 2});
-    g.addEdge(4, {2, 5});
-    g.addEdge(5, {4, 6, 7, 9});
-    g.addEdge(6, 5);
-    g.addEdge(7, {5, 8});
-    g.addEdge(8, 7);
-    g.addEdge(9, {5, 10});
-    g.addEdge(10, 9);
+    g.addEdge(0, 1, 1);
+    g.addEdge(1, {0, 2, 3}, {1, 1, 1});
+    g.addEdge(2, {1, 3, 4}, {1, 1, 1});
+    g.addEdge(3, {1, 2}, {1, 1});
+    g.addEdge(4, {2, 5}, {1, 1});
+    g.addEdge(5, {4, 6, 7, 9}, {1, 1, 1, 1});
+    g.addEdge(6, 5, 1);
+    g.addEdge(7, {5, 8}, {1, 1});
+    g.addEdge(8, 7, 1);
+    g.addEdge(9, {5, 10}, {1, 1});
+    g.addEdge(10, 9, 1);
 
     // After constructing the graph we can manipulate it
     g.printGraph();
-    g.bfs(0);
+    // g.bfs(0);
+    g.dijkstra(0, 10);
     g.printVisited();
     g.printWeight();
     // g.dfs();

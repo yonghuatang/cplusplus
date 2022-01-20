@@ -338,23 +338,24 @@ class undirectedGraph {
         }
 
         //
-        int findWeightInPQ(PQ pq, int thisNode) {
+        int findDistanceInPQ(PQ pq, int thisNode) {
             PQ pq_temp = pq;
-            int weight = -1;
+            int distance = -1;
             while (!pq_temp.empty()) {
                 if (pq_temp.top().first == thisNode) {
-                    weight = pq_temp.top().second.second;
+                    distance = pq_temp.top().second.second;
                     break;
                 }
                 pq_temp.pop();
             }
-            return weight;
+            return distance;
         }
 
         // Dijkstra's algorithm
         void dijkstra(int startNode, int targetNode) {
             cout << "=== Dijkstra's algorithm ===" << endl;
             PQ pq;
+            stack<PAIR> visitedStack;
             const int INF = 1000000007;
 
             // Pushes every node in the graph into the priority queue with previousNode = INF and distance = INF
@@ -374,16 +375,19 @@ class undirectedGraph {
                 visited[currentNode] = true;
                 for (auto adjNode : neighbours(currentNode)) {
                     if (!visited[adjNode]) {
-                        for () {
-                            // use for loop instead to access pair in vectors!!
-                        }
-                        auto it = std::find_if(edgeWeight[currentNode].begin(), edgeWeight[currentNode].end(), findAssert);
-                        if (it != edgeWeight[currentNode].end() && currentDistance + it->second < findWeightInPQ(pq, adjNode)) {
-                            pq = popOutdated(pq, adjNode);
-                            pq.push(std::make_pair(adjNode, std::make_pair(currentNode, currentDistance + it->second)));
+                        for (auto it=edgeWeight[currentNode].begin(); it!=edgeWeight[currentNode].end(); it++) {
+                            if (it->first == adjNode) {
+                                if (currentDistance + it->second < findDistanceInPQ(pq, adjNode)) {
+                                    pq = popOutdated(pq, adjNode);
+                                    pq.push(std::make_pair(adjNode, std::make_pair(currentNode, currentDistance + it->second)));
+                                }
+                            }
                         }
                     }
                 }
+                visitedStack.push(pq.top());
+                pq.pop();
+                cout << currentNode << endl; // for debug
             }
             cout << "Distance/cost to target node: " << pq.top().second.second << endl;
 

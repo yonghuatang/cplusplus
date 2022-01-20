@@ -11,6 +11,7 @@ James Tang - 16 January 2022
 #include <vector>
 #include <map>
 #include <stack>
+#include <queue>
 
 using namespace std;
 
@@ -22,7 +23,7 @@ class undirectedGraph {
     private:
         map<int, vector<int>> adj; // Adjacency list
         map<int, bool> visited;  // Visited list
-        map<int, vector<std::pair<int, int>>> edgeWeight;  // Weight of each edge, default is zero
+        map<int, vector<std::pair<int, int>>> edgeWeight;  // Weight of each edge, default is zero. <node, <<neighbour, weight>, ...>>
         stack<int> cache;  // Stack implementation of DFS
         
 
@@ -50,13 +51,13 @@ class undirectedGraph {
             } else {
                 adj[node].push_back(neighbour);
                 visited[node] = false;
-                edgeWeight[node].push_back(make_pair(neighbour, weight));
+                edgeWeight[node].push_back(std::make_pair(neighbour, weight));
                 // If a node shares an edge with its neighbour, then from the neighbour's perspective
                 // it should also share the same edge, i.e., the adjacency list (matrix) is symmetric.
                 if (!adjacent(neighbour, node)) {
                     adj[neighbour].push_back(node);
                     visited[neighbour] = false;
-                    edgeWeight[neighbour].push_back(make_pair(node, weight));
+                    edgeWeight[neighbour].push_back(std::make_pair(node, weight));
                 }
             }
         }
@@ -82,13 +83,13 @@ class undirectedGraph {
                 } else {
                     adj[node].push_back(i);
                     visited[i] = false;
-                    edgeWeight[node].push_back(make_pair(i, weight));
+                    edgeWeight[node].push_back(std::make_pair(i, weight));
                     // If a node shares an edge with its neighbour, then from neighbour's perspective
                     // it should also share the same edge.
                     if (!adjacent(i, node)) {
                         adj[i].push_back(node);
                         visited[node] = false;
-                        edgeWeight[i].push_back(make_pair(node, weight));
+                        edgeWeight[i].push_back(std::make_pair(node, weight));
                     }
                 }
             }
@@ -311,8 +312,42 @@ class undirectedGraph {
             }
         }
 
+        // typedef for Dijkstra's algorithm: <<currentNode, upToDate>, <previousNode, distance>>
+        typedef std::pair<std::pair<int, bool>, std::pair<int, int>> PAIR;
+
+        // Comparator structure for priority queue in void dijkstra()
+        struct compDijkstra {
+            bool operator()(const PAIR& p1, const PAIR& p2) {
+                return p1.second.second > p2.second.second;  // min heap
+            }
+        };
+
         // Dijkstra's algorithm
-        void dijkstra() {}
+        void dijkstra(int startNode, int targetNode) {
+            std::priority_queue<PAIR, vector<PAIR>, compDijkstra> pq;
+            const int INF = 1000000007;
+
+            // Push every node in the graph into the priority queue with distance = INF and 
+            for (auto it=adj.begin(); it!=adj.end(); it++) {
+                pq.push(std::make_pair(std::make_pair(), std::make_pair()));
+            }
+            pq.push(std::make_pair(startNode, std::make_pair(-1, 0)));
+            visited[startNode] = true;
+            while (pq.top().first != targetNode) {
+                const auto currentNode = pq.top().first;
+                const auto currentDistance = pq.top().second.second;
+                visited[currentNode] = true;
+                for (auto adjNode : neighbours(currentNode)) {
+                    if (!visited[adjNode]) {
+                        auto it = std::find_if(edgeWeight[currentNode].begin(), edgeWeight[currentNode].end(), [adjNode](pair<int, int> p){p.first == adjNode;});
+                        if () {
+                            pq.push(std::make_pair(adjNode, std::make_pair(currentNode, currentDistance + it->second)));
+                        }
+                    }
+                }
+
+            }
+        }
 };
 
 /* ----------------- Example -----------------
@@ -349,7 +384,7 @@ int main() {
     g.printGraph();
     g.bfs(0);
     g.printVisited();
-    // g.printWeight();
+    g.printWeight();
     // g.dfs();
     // g.printGraph();  // should be the same graph
     // g.printVisited();  // should be all true

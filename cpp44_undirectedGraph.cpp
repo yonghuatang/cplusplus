@@ -354,6 +354,12 @@ class undirectedGraph {
         // Dijkstra's algorithm
         void dijkstra(int startNode, int targetNode) {
             cout << "=== Dijkstra's algorithm ===" << endl;
+            if (startNode == targetNode) {
+                cout << "Trivial: startNode and targetNode are the same." << endl;
+                cout << "Distance/cost to target node: 0" << endl;
+                return;  // exits the function at this point
+            }
+
             PQ pq;
             stack<PAIR> visitedStack;
             const int INF = 1000000007;
@@ -387,14 +393,20 @@ class undirectedGraph {
                 }
                 visitedStack.push(pq.top());
                 pq.pop();
-                cout << currentNode << endl; // for debug
+                cerr << currentNode << endl; // for debug
             }
+            visited[targetNode] = true;
             cout << "Distance/cost to target node: " << pq.top().second.second << endl;
 
             // Backtrack path from target node to starting node
             // for () {
 
             // }
+            // cout << "Path: ";
+            // for () {
+            //     cout <<  << " => ";
+            // }
+            // cout << "\n";
         }
 };
 

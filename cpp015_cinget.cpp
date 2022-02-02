@@ -1,16 +1,26 @@
 #include <iostream>
 using namespace std;
 
-
 int main() {
-    // cin.get() is sometimes useful than cin
-    cout << "\n" << "=== cin.get() ===" << endl;
-    string str1;
-    char str2[25];
-    cout << "Input: " << endl;
-    // cin >> str1;  // reads input, but interrupted by whitespace
+    string str1, str2;
+    char str3[15];
+
+    cout << "Input str1: " << endl;
+    cin >> str1;  // reads input, but interrupted by whitespace
+    cout << "str1: " << str1 << endl;
+
     // or
-    cin.get(str2, 25);  // reads input of char of length 25, ignores whitespaces
-    cout << "Output: \n" << str2 << endl;
+
+    cout << "Input str2: " << endl;
+    cin.ignore();  // required if std::getline() is after std::cin
+    std::getline(cin, str2);
+    cout << "str2: " << str2 << endl;
+
+    // or
+
+    cout << "Input str3: " << endl;
+    cin.get(str3, 15);  // reads input of char[] of length 15, ignores whitespaces
+    cout << "str3: " << str3 << endl;
+
     return 0;
 }

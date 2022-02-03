@@ -26,7 +26,6 @@ class undirectedGraph {
         map<int, vector<std::pair<int, int>>> edgeWeight;  // Weight of each edge, default is zero. <node, <<neighbour, weight>, ...>>
         stack<int> cache;  // Stack implementation of DFS
         
-
     public:
         // Constructor
         undirectedGraph() {
@@ -312,24 +311,24 @@ class undirectedGraph {
             }
         } // BUG!!
 
-        // <thisNode, <previousNode, distance>>
-        typedef std::pair<int, std::pair<int, int>> PAIR;
+        // <thisNode, previousNode, distance>
+        typedef std::tuple<int, int, int> TUPLE;
 
         // Comparator structure for priority queue in void dijkstra()
         struct compDijkstra {
-            bool operator()(const PAIR& p1, const PAIR& p2) {
-                return p1.second.second > p2.second.second;  // min heap
+            bool operator()(const TUPLE& t1, const TUPLE& t2) {
+                return std::get<2>(t1) > std::get<2>(t2);  // min heap
             }
         };
 
-        // <TYPE, CONTAINER, COMPARATOR>
-        typedef std::priority_queue<PAIR, vector<PAIR>, compDijkstra> PQ;
+        // <Type, Container, Comparator>
+        typedef std::priority_queue<TUPLE, vector<TUPLE>, compDijkstra> PQ;
 
         // Pops a particular element in a priority queue, because std::priority_queue has no member function to do so
         PQ popOutdated(PQ pq, int popNode) {
             PQ pq_new;
             while (!pq.empty()) {
-                if (pq.top().first != popNode) {
+                if (std::get<0>(pq.top()) != popNode) {
                     pq_new.push(pq.top());
                 }
                 pq.pop();
@@ -342,8 +341,8 @@ class undirectedGraph {
             PQ pq_temp = pq;
             int distance = -1;
             while (!pq_temp.empty()) {
-                if (pq_temp.top().first == thisNode) {
-                    distance = pq_temp.top().second.second;
+                if (std::get<0>(pq_temp.top()) == thisNode) {
+                    distance = std::get<2>(pq_temp.top());
                     break;
                 }
                 pq_temp.pop();
@@ -352,7 +351,7 @@ class undirectedGraph {
         }
 
         // Dijkstra's algorithm
-        void dijkstra(int startNode, int targetNode) {
+        void dijkstra(const int startNode, const int targetNode) {
             cout << "=== Dijkstra's algorithm ===" << endl;
             if (startNode == targetNode) {
                 cout << "Trivial: startNode and targetNode are the same." << endl;
@@ -361,23 +360,23 @@ class undirectedGraph {
             }
 
             PQ pq;
-            stack<PAIR> visitedStack;
+            stack<TUPLE> visitedStack;
             const int INF = 1000000007;
 
             // Pushes every node in the graph into the priority queue with previousNode = INF and distance = INF
             for (auto it=adj.begin(); it!=adj.end(); it++) {
-                pq.push(std::make_pair(it->first, std::make_pair(INF, INF)));
+                pq.push(std::make_tuple(it->first, INF, INF));
             }
 
             // Makes the startNode to have previousNode = -1 and distance = 0
             pq = popOutdated(pq, startNode);
-            pq.push(std::make_pair(startNode, std::make_pair(-1, 0)));
+            pq.push(std::make_tuple(startNode, -1, 0));
             visited[startNode] = true;
 
             // While the targetNode is not ordered on top of the priority queue
-            while (pq.top().first != targetNode) {
-                const auto currentNode = pq.top().first;
-                const auto currentDistance = pq.top().second.second;
+            while (std::get<0>(pq.top()) != targetNode) {
+                const auto currentNode = std::get<0>(pq.top());
+                const auto currentDistance = std::get<2>(pq.top());
                 visited[currentNode] = true;
                 for (auto adjNode : neighbours(currentNode)) {
                     if (!visited[adjNode]) {
@@ -385,7 +384,7 @@ class undirectedGraph {
                             if (it->first == adjNode) {
                                 if (currentDistance + it->second < findDistanceInPQ(pq, adjNode)) {
                                     pq = popOutdated(pq, adjNode);
-                                    pq.push(std::make_pair(adjNode, std::make_pair(currentNode, currentDistance + it->second)));
+                                    pq.push(std::make_tuple(adjNode, currentNode, currentDistance + it->second));
                                 }
                             }
                         }
@@ -395,8 +394,9 @@ class undirectedGraph {
                 pq.pop();
                 cerr << currentNode << endl; // for debug
             }
+
             visited[targetNode] = true;
-            cout << "Distance/cost to target node: " << pq.top().second.second << endl;
+            cout << "Distance/cost to target node: " << std::get<2>(pq.top()) << endl;
 
             // Backtrack path from target node to starting node
             // for () {

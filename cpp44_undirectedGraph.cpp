@@ -3,6 +3,7 @@ Undirected Graph Traversals:
 1. Depth-First Search (DFS)
 2. Breadth-First Search (BFS)
 3. Dijkstra's Algorithm
+4. Minimum Spanning Tree (Prim's algorithm and Kruskal's Algorithm)
 Compiled using C++20 (g++ -std=c++2a)
 James Tang - 16 January 2022
 */
@@ -263,7 +264,7 @@ class undirectedGraph {
         }
 
         // Depth-first search (DFS)
-        void dfs(int s/*, int startNode ??*/) {
+        void dfs(const int s/*, int startNode ??*/) {
             static bool checked{false}; // ??
             if (!checked) {
                 cout << "RUNNING CHECKED" << endl;  // FOR DEBUG
@@ -286,7 +287,7 @@ class undirectedGraph {
         }
 
         // Breadth-first search (BFS)
-        void bfs(int startNode) {
+        void bfs(const int startNode) {
             cout << "=== Breadth-first search (BFS) ===" << endl;
             int depth = 0;
             map<int, int> label;
@@ -392,21 +393,31 @@ class undirectedGraph {
                 }
                 visitedStack.push(pq.top());
                 pq.pop();
-                cerr << currentNode << endl; // for debug
+                cerr << currentNode << endl;  // for debug
             }
 
             visited[targetNode] = true;
             cout << "Distance/cost to target node: " << std::get<2>(pq.top()) << endl;
 
             // Backtrack path from target node to starting node
-            // for () {
+            // The target node is now on top of the priority queue, so we first find its previous node
+            int previousNode = std::get<1>(pq.top());
+            stack<int> backtrackPath;
 
-            // }
-            // cout << "Path: ";
-            // for () {
-            //     cout <<  << " => ";
-            // }
-            // cout << "\n";
+            while (!visitedStack.empty()) {
+                if (std::get<0>(visitedStack.top()) == previousNode) {
+                    backtrackPath.push(std::get<0>(visitedStack.top()));
+                    previousNode = std::get<1>(visitedStack.top());
+                }
+                visitedStack.pop();
+            }
+
+            cout << "Path: ";
+            while (!backtrackPath.empty()) {
+                cout << backtrackPath.top() << " => ";
+                backtrackPath.pop();
+            }
+            cout << targetNode << endl;
         }
 };
 

@@ -1,5 +1,5 @@
 /*
-Undirected Graph Traversals:
+Undirected Graph Searches & Traversals:
 1. Depth-First Search (DFS)
 2. Breadth-First Search (BFS)
 3. Dijkstra's Algorithm
@@ -12,17 +12,17 @@ Created: 16th January 2022 (Sunday)
 */
 
 #include <iostream>
-#include <vector>
 #include <map>
-#include <stack>
 #include <queue>
+#include <stack>
+#include <vector>
 
 using namespace std;
 
 #define VERBOSE_WARNING  // high verbosity
 
 
-// For an undirected graph G(V,E), every pair of unordered nodes (or vertices) (vi,vj) forms an edge
+// For an undirected graph G(V,E), every unordered pair of nodes (or vertices) (vi,vj) may form an edge
 class undirectedGraph {
     private:
         map<int, vector<int>> adj; // Adjacency list
@@ -263,8 +263,10 @@ class undirectedGraph {
                 cout << "=== Depth-first search (DFS) ===" << endl;
                 printed = true;
             }
+
             if (!visited[node]) {
                 visited[node] = true;
+                // cout << "Node: " << node << endl;
                 for (const auto& neighbour : adj[node]) {
                     dfs(neighbour);  // recursive call
                 }
@@ -415,7 +417,7 @@ class undirectedGraph {
 
     // Kruskal's algorithm to find the minimum spanning tree (of a connected undirected graph)
     void kruskal() {
-        
+
     }
 };
 
@@ -451,7 +453,7 @@ int main() {
 
     // After constructing the graph we can manipulate it
     g.printGraph();
-    g.bfs(0);
+    g.dfs(0);
     // g.dijkstra(0, 10);
     g.printVisited();
     // g.printWeight();

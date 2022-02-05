@@ -4,8 +4,11 @@ Undirected Graph Traversals:
 2. Breadth-First Search (BFS)
 3. Dijkstra's Algorithm
 4. Minimum Spanning Tree (Prim's algorithm and Kruskal's Algorithm)
+
 Compiled using C++20 (g++ -std=c++2a)
-James Tang - 16 January 2022
+
+Author: James Tang
+Created: 16th January 2022 (Sunday)
 */
 
 #include <iostream>
@@ -25,7 +28,7 @@ class undirectedGraph {
         map<int, vector<int>> adj; // Adjacency list
         map<int, bool> visited;  // Visited list
         map<int, vector<std::pair<int, int>>> edgeWeight;  // Weight of each edge, default is zero. <node, <<neighbour, weight>, ...>>
-        stack<int> cache;  // Stack implementation of DFS
+        const int INF = 1000000007;
         
     public:
         // Constructor
@@ -39,7 +42,7 @@ class undirectedGraph {
         }
 
         // Adds an edge connecting two nodes
-        void addEdge(int node, int neighbour, int weight=0) {
+        void addEdge(int node, int neighbour, int weight = 0) {
             if (adjacent(node, neighbour)) {
                 #ifdef VERBOSE_WARNING
                 cout << "=== Warning: Edge already exists. Node: " << node << " Neighbour: " << neighbour << " ===" << endl;
@@ -169,8 +172,8 @@ class undirectedGraph {
             return false;
         }
 
-        // Returns the degree (number of neighbours) of a particular node
-        // To find number of neighbours call neighbours().size()
+        // Returns the neighbour(s) of a particular node
+        // To find the degree (number of neighbour(s)) call neighbours().size()
         vector<int> neighbours(int node) {
             return adj[node];
         }
@@ -190,17 +193,6 @@ class undirectedGraph {
             for (int i : v) {
                 cout << i << " ";
             }
-        }
-
-        // A function to print all elements in a stack
-        void printStack() const {
-            auto cacheTemp = cache;  // Create a copy of cache
-            string output = "";
-            while (!cacheTemp.empty()) {
-                output = to_string(cacheTemp.top()) + " => " + output;
-                cacheTemp.pop();
-            }
-            cout << "| " << output << endl;
         }
 
         // Checks whether a node is isolated (i.e. not connected to any other nodes)
@@ -248,7 +240,7 @@ class undirectedGraph {
         }
 
         // Prints weight of all edges
-        void printWeight() {
+        void printWeight() const {
             if (edgeWeight.empty()) {
                 cout << "Edge-weight list is empty." << endl;
                 return;
@@ -263,25 +255,18 @@ class undirectedGraph {
             }
         }
 
-        // Depth-first search (DFS)
-        void dfs(const int s/*, int startNode ??*/) {
-            static bool checked{false}; // ??
-            if (!checked) {
-                cout << "RUNNING CHECKED" << endl;  // FOR DEBUG
-                checked = true;
-                if (adj.empty() || visited.empty()) {
-                    cout << "Adjacency list or visited list is empty." << endl;
-                }
-            } else if (visited[s]) {
-                return;  // exits the function, return void
-            } else {
-                visited[s] = true;
-                cache.push(s);  // ??
-                printStack();
-                for (auto node : adj[s]) {
-                    if (!visited[node]) {
-                        dfs(node);  // recursion??
-                    }
+        // Depth-first search (DFS) by rerursive implementation.
+        // The input parameter for the initialising case is the startNode.
+        void dfs(const int node) {
+            static bool printed = false; 
+            if (!printed) {
+                cout << "=== Depth-first search (DFS) ===" << endl;
+                printed = true;
+            }
+            if (!visited[node]) {
+                visited[node] = true;
+                for (const auto& neighbour : adj[node]) {
+                    dfs(neighbour);  // recursive call
                 }
             }
         }
@@ -290,27 +275,32 @@ class undirectedGraph {
         void bfs(const int startNode) {
             cout << "=== Breadth-first search (BFS) ===" << endl;
             int depth = 0;
-            map<int, int> label;
+            map<int, vector<int>> label;  // <depth, <nodes, ...>>
             visited[startNode] = true;
-            label[startNode] = depth;
-            cout << "Depth: 0     Node: " << startNode << endl;
+            label[depth].push_back(startNode);
+
             while (!allVisited()) {
-                for (auto it=label.begin(); it!=label.end(); it++) {
-                    if (it->second == depth) {
-                        cout << "Depth: " << depth + 1 << "     Node(s): ";
-                        for (auto i : neighbours(it->first)) {
-                            if (!visited[i]) {
-                                visited[i] = true;
-                                label[i] = depth + 1;
-                                cout << i << " ";
-                            }
+                cout << "Depth: " << depth << "     Node(s):";
+                for (const int& node: label[depth]) {
+                    for (const int& neighbour : neighbours(node)) {
+                        if (!visited[neighbour]) {
+                            visited[neighbour] = true;
+                            label[depth + 1].push_back(neighbour);
                         }
-                        cout << "\n";
                     }
+                    cout << " " << node;
                 }
+                cout << "\n";
                 depth++;
             }
-        } // BUG!!
+
+            // last depth
+            cout << "Depth: " << depth << "     Node(s):";
+            for (const int& node: label[depth]) {
+                cout << " " << node;
+            }
+            cout << "\n";
+        }
 
         // <thisNode, previousNode, distance>
         typedef std::tuple<int, int, int> TUPLE;
@@ -338,7 +328,7 @@ class undirectedGraph {
         }
 
         //
-        int findDistanceInPQ(PQ pq, int thisNode) {
+        int findDistanceInPQ(PQ pq, int thisNode) const {
             PQ pq_temp = pq;
             int distance = -1;
             while (!pq_temp.empty()) {
@@ -353,16 +343,14 @@ class undirectedGraph {
 
         // Dijkstra's algorithm
         void dijkstra(const int startNode, const int targetNode) {
-            cout << "=== Dijkstra's algorithm ===" << endl;
             if (startNode == targetNode) {
                 cout << "Trivial: startNode and targetNode are the same." << endl;
                 cout << "Distance/cost to target node: 0" << endl;
-                return;  // exits the function at this point
+                return;  // exits the function promptly at this point
             }
 
             PQ pq;
             stack<TUPLE> visitedStack;
-            const int INF = 1000000007;
 
             // Pushes every node in the graph into the priority queue with previousNode = INF and distance = INF
             for (auto it=adj.begin(); it!=adj.end(); it++) {
@@ -393,7 +381,7 @@ class undirectedGraph {
                 }
                 visitedStack.push(pq.top());
                 pq.pop();
-                cerr << currentNode << endl;  // for debug
+                // cerr << currentNode << endl;  // for debugging
             }
 
             visited[targetNode] = true;
@@ -404,7 +392,7 @@ class undirectedGraph {
             int previousNode = std::get<1>(pq.top());
             stack<int> backtrackPath;
 
-            while (!visitedStack.empty()) {
+            while (!visitedStack.empty() || previousNode != -1) {
                 if (std::get<0>(visitedStack.top()) == previousNode) {
                     backtrackPath.push(std::get<0>(visitedStack.top()));
                     previousNode = std::get<1>(visitedStack.top());
@@ -435,7 +423,7 @@ class undirectedGraph {
 --------------------------------------------*/
 
 int main() {
-    // Create a Graph object
+    // Create an undirectedGraph object
     undirectedGraph g;
 
     // Construct the graph by populating the adjacency list
@@ -453,10 +441,10 @@ int main() {
 
     // After constructing the graph we can manipulate it
     g.printGraph();
-    // g.bfs(0);
-    g.dijkstra(0, 10);
+    g.bfs(0);
+    // g.dijkstra(0, 10);
     g.printVisited();
-    g.printWeight();
+    // g.printWeight();
     // g.dfs();
     // g.printGraph();  // should be the same graph
     // g.printVisited();  // should be all true

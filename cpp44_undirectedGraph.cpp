@@ -407,6 +407,16 @@ class undirectedGraph {
             }
             cout << targetNode << endl;
         }
+    
+    // Prim's algorithm to find the minimum spanning tree (of a connected undirected graph)
+    void prim() {
+
+    }
+
+    // Kruskal's algorithm to find the minimum spanning tree (of a connected undirected graph)
+    void kruskal() {
+        
+    }
 };
 
 /* ----------------- Example -----------------

@@ -58,6 +58,19 @@ struct comp {
 priority_queue<int, vector<int>, comp> pq2;
 
 
+/* === Deque: Double-ended queue === */
+
+deque<int> dq;
+// -- Typical member functions --
+// dq.push_back()
+// dq.push_front()
+// dq.pop_back()
+// dq.pop_front()
+// dq.back()
+// dq.front()
+// dq.size()
+
+
 /* === Set: container that stores unique elements === */
 
 set<int> s;

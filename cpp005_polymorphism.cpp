@@ -7,7 +7,7 @@ int main() {
     string bar = "Nice to meet you!";
     int x = 4;
     int y = 5;
-    cout << foo + bar << endl; // concatenate
-    cout << x + y << endl;  // integer addition
+    cout << foo + bar << endl;  // string concatenation
+    cout << x + y << endl;      // integer addition
     return 0;
 }

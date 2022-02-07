@@ -1,5 +1,7 @@
-# include <bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
+
+#define SIZE(arr) sizeof(arr) / sizeof(arr[0])
 
 template<typename T> void swap(T* x, T* y) {  
     const T temp = *x;  
@@ -45,12 +47,12 @@ template<typename T> void printArray(T arr[], int size) {
 
 int main() {  
     int myArray[] = {64, 34, 67, 12, 22, 11, 90, 3, 199};
-    const int myArraySize = sizeof(myArray) / sizeof(myArray[0]);
+    const int myArraySize = SIZE(myArray);
     bubbleSort<int>(myArray, myArraySize);
     printArray<int>(myArray, myArraySize);
 
     char myArray2[] = {'e', 'y', 'l', 'l', 'g', 'x', 'o', 'i', 'n', 'm'};
-    const int myArraySize2 = sizeof(myArray2) / sizeof(myArray2[0]);
+    const int myArraySize2 = SIZE(myArray2);
     bubbleSort<char>(myArray2, myArraySize);
     printArray<char>(myArray2, myArraySize);
     return 0;

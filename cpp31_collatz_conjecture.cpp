@@ -1,7 +1,7 @@
-# include <iostream>
-using namespace std;
-
 // Collatz Conjecture C++
+
+#include <iostream>
+using namespace std;
 
 int main() {
     cout << "Please enter a number: ";
@@ -11,11 +11,10 @@ int main() {
     while (n != 1 && n > 1) {
         if (n % 2 == 0) {
             n /= 2;
-        }
-        else {
+        } else {
             n = 3*n + 1;
         }
-        ++count;
+        count++;
         cout << "Iteration " << count << ": " << n << endl; 
     }
     cout << "Number of iterations: " << count << endl; 

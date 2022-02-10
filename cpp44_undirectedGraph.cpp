@@ -3,7 +3,6 @@ Undirected Graph Searches & Traversals:
 1. Depth-First Search (DFS)
 2. Breadth-First Search (BFS)
 3. Dijkstra's Algorithm
-4. Minimum Spanning Tree (Prim's algorithm and Kruskal's Algorithm)
 
 Compiled using C++20 (g++ -std=c++2a)
 
@@ -409,16 +408,6 @@ class undirectedGraph {
             }
             cout << targetNode << endl;
         }
-    
-    // Prim's algorithm to find the minimum spanning tree (of a connected undirected graph)
-    void prim() {
-
-    }
-
-    // Kruskal's algorithm to find the minimum spanning tree (of a connected undirected graph)
-    void kruskal() {
-
-    }
 };
 
 /* ----------------- Example -----------------

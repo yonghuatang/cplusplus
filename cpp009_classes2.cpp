@@ -8,6 +8,7 @@ class Student {
         string lastName;
         int age;
         string all;
+
     public:
         Student(string foo, string bar, int baz) {  
             firstName = foo;
@@ -15,11 +16,19 @@ class Student {
             age = baz;
             all = firstName + " " + lastName + ", " + std::to_string(age);  // int => string
         }
+
         string getName() const {
             return firstName + " " + lastName;
         }
+
         string getAll() const {
             return all;
+        }
+
+        // Class insertion operator '<<' overloading
+        friend ostream& operator<<(ostream& os, const Student& stu) {
+            os << stu.all;
+            return os;
         }
 };
 
@@ -28,5 +37,7 @@ int main() {
     Student s2("Ali", "Baba", 35);
     cout << "Welcome! " << s1.getName() << endl;
     cout << "Hello! " << s2.getAll() << endl;
+    cout << s1 << endl;
+    cout << s2 << endl;
     return 0;
 }
